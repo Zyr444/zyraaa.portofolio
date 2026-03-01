@@ -1,11 +1,15 @@
-# Pake Nginx yang enteng
 FROM nginx:alpine
 
-# Hapus file default Nginx biar bersih (Opsional tapi bagus)
+# 1. Bersihkan folder default Nginx
 RUN rm -rf /usr/share/nginx/html/*
 
-# COPY SEMUA isi folder project kamu (termasuk folder css, js, img)
+# 2. Copy semua file dari folder proyek (titik) ke folder Nginx
+# Pastikan ada spasi antara titik dan /usr/...
 COPY . /usr/share/nginx/html/
 
-# Buka jalur port 80
+# 3. Beri izin akses (PENTING: Biar gak Forbidden/Putih)
+RUN chmod -R 755 /usr/share/nginx/html/
+
 EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
