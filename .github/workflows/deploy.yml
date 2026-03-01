@@ -19,8 +19,9 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/my-portfolio:latest .
-          docker push ${{ secrets.DOCKER_USERNAME }}/my-portfolio:latest
+          # Pakai nama repo baru kamu di sini
+          docker build -t zryaaa444/zyr4portofolio:latest .
+          docker push zryaaa444/zyr4portofolio:latest
 
   deploy-to-aws:
     needs: build-and-push
@@ -35,25 +36,24 @@ jobs:
           chmod 600 ~/.ssh/key.pem
           ssh-keyscan -H 47.129.98.137 >> ~/.ssh/known_hosts
           
-          # Bagian yang SANGAT PENTING (Wajib ada SUDO)
           ssh -i ~/.ssh/key.pem ubuntu@47.129.98.137 "
-            # Login dulu di server biar gak error pull (pakai sudo)
+            # Login Docker di AWS
             echo '${{ secrets.DOCKER_PASSWORD }}' | sudo docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin &&
             
-            # Tarik image terbaru (pakai sudo)
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/my-portfolio:latest &&
+            # Tarik image terbaru dari repo baru
+            sudo docker pull zryaaa444/zyr4portofolio:latest &&
             
-            # Matikan portfolio lama & staging (pakai sudo)
+            # Matikan & Hapus container lama (biar port 80 bersih)
             sudo docker stop portfolio-app || true &&
             sudo docker rm -f portfolio-app || true &&
             
-            # Usir aplikasi staging atau apapun yang pakai port 80
+            # Pastikan tidak ada yang nyangkut di port 80
             sudo fuser -k 80/tcp || true &&
             
-            # Jalankan container baru di port 80 (pakai sudo)
+            # Jalankan container baru pakai bungkusan zyr4portofolio
             sudo docker run -d \
               --name portfolio-app \
               --restart always \
               -p 80:80 \
-              ${{ secrets.DOCKER_USERNAME }}/my-portfolio:latest
+              zryaaa444/zyr4portofolio:latest
           "
