@@ -47,14 +47,16 @@ const ContactPage = () => {
       // Ganti dengan email Anda di FormSubmit
       const formSubmitUrl = 'https://formsubmit.co/info.azhryan@gmail.com';
       
-      // Siapkan data form untuk FormSubmit
-      const submitData = new FormData();
-      submitData.append('name', formData.name);
-      submitData.append('email', formData.email);
-      submitData.append('message', formData.message);
-      submitData.append('_subject', 'Pesan Baru dari Website Portfolio');
-      submitData.append('_captcha', 'false'); // Nonaktifkan captcha
-      submitData.append('_template', 'table'); // Format email sebagai tabel
+    // Di dalam handleSubmit, cari bagian submitData.append
+const submitData = new FormData();
+submitData.append('name', formData.name);
+submitData.append('email', formData.email);
+submitData.append('message', formData.message);
+submitData.append('_subject', 'Pesan Baru dari Website Portfolio');
+submitData.append('_captcha', 'false');
+
+// TAMBAHKAN BARIS INI:
+submitData.append('_next', 'http://47.129.98.137/contact');
 
       await axios.post(formSubmitUrl, submitData, {
         headers: {
