@@ -52,11 +52,12 @@ const submitData = new FormData();
 submitData.append('name', formData.name);
 submitData.append('email', formData.email);
 submitData.append('message', formData.message);
+
 submitData.append('_subject', 'Pesan Baru dari Website Portfolio');
 submitData.append('_captcha', 'false');
 
 // TAMBAHKAN BARIS INI:
-submitData.append('_next', 'http://47.129.98.137/contact');
+submitData.append('_next', 'https://azhryanm.my.id/contact');
 
       await axios.post(formSubmitUrl, submitData, {
         headers: {
