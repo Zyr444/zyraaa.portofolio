@@ -6,7 +6,9 @@ WORKDIR /app
 
 # Copy file konfigurasi npm dulu biar cepat
 COPY package*.json ./
-RUN npm install
+
+# UBAH BAGIAN INI: Paksa install meskipun ada konflik versi React
+RUN npm install --legacy-peer-deps
 
 # Copy semua kode React kamu ke dalam Docker
 COPY . .
