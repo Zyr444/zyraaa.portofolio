@@ -1,34 +1,31 @@
 # ==========================================
-# TAHAP 1: "Dapur" (Build React)
+# TAHAP 1: Build React/Vite
 # ==========================================
 FROM node:18-alpine AS builder
 WORKDIR /app
 
-# Copy file konfigurasi npm dulu biar cepat
+# Copy file package dan install (pakai legacy-peer-deps biar aman)
 COPY package*.json ./
-
-# UBAH BAGIAN INI: Paksa install meskipun ada konflik versi React
 RUN npm install --legacy-peer-deps
 
-# Copy semua kode React kamu ke dalam Docker
+# Copy semua source code
 COPY . .
 
-# Masak kodenya! (Ini akan menghasilkan folder 'dist' atau 'build')
+# Build aplikasi Vite (Akan menghasilkan folder 'dist')
 RUN npm run build
 
 # ==========================================
-# TAHAP 2: "Pelayan" (Nginx)
+# TAHAP 2: Sajikan dengan Nginx
 # ==========================================
 FROM nginx:alpine
 
-# Bersihkan meja Nginx
+# Bersihkan folder default Nginx
 RUN rm -rf /usr/share/nginx/html/*
 
-# Copy hasil masakan dari Tahap 1 ke Nginx
-# UBAH KATA 'dist' JADI 'build' JIKA KAMU PAKAI CREATE REACT APP
+# COPY HASIL BUILD DARI TAHAP 1 (folder dist)
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Konfigurasi Nginx khusus React (Biar gak Error 404 kalau halamannya di-refresh)
+# Konfigurasi Nginx untuk React/SPA
 RUN echo 'server { listen 80; location / { root /usr/share/nginx/html; index index.html index.htm; try_files $uri $uri/ /index.html; } }' > /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
